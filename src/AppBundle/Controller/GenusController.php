@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Genus;
+use AppBundle\Service\MarkdownTransformer;
 
 
 class GenusController extends Controller
@@ -69,7 +70,13 @@ class GenusController extends Controller
         if (!$genus) {
             throw $this->createNotFoundException('genus not found');
         }
-
+        $markdownTransformer = $this->get('app.markdown_transformer');
+       
+        
+//        $markdownParser = new MarkdownTransformer();
+        $funFact = $markdownTransformer->parse($genus->getFunFact());
+        
+        
         // todo - add the caching back later
         /*
         $cache = $this->get('doctrine_cache.providers.my_markdown_cache');
@@ -88,7 +95,9 @@ class GenusController extends Controller
             ->info('Showing genus: '.$genusName);
 
         return $this->render('genus/show.html.twig', array(
-            'genus' => $genus
+            'genus' => $genus,
+            'funFact' => $funFact,
+            
         ));
     }
 
